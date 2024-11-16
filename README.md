@@ -1,4 +1,4 @@
-# LIMD
+# Do More with Less
 
 [Project](https://justananonymousaccount.github.io/Do-More-with-Less/) | [Paper](https://drive.google.com/file/d/1NVQ1FTtc44RwXbXcjjsHOYC3LG2LvtlF/view) | [Supplementary materials](https://matankleiner.github.io/sinddm/resources/sinddm_supp.pdf)
 ### Official pytorch implementation of the paper: "Do More with Less: Pushing Boundaries in Zero-Shot Super-Resolution with Diffusion Models"
