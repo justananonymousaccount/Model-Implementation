@@ -26,14 +26,14 @@ pip install -r requirements.txt
 ```
 
 ## Training
-To train a LIMD model on your own image e.g. `<training_image.png>`, put the desired training image under `./datasets/`, and run
+To train a model on your own image e.g. `<training_image.png>`, put the desired training image under `./datasets/`, and run
 
 ```
 python main.py --scope <training_image> --mode train --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/ 
 ```
 
 ## Inference and Super Resolution 
-To generate super resolution result on scale factor `r`, please first train a LIMD model on the desired image (as described above) or use a provided pretrained model, then run
+To generate super resolution result on scale factor `r`, please first train a model on the desired image (as described above) or use a provided pretrained model, then run
 
 ```
 python main.py --scope <training_image> --mode SR --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/ --sr_factor r --load_milestone 4
