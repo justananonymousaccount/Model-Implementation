@@ -45,7 +45,7 @@ We provide several pre-trained models for you to use under `./results/` director
 We provide all the training images we used in our paper under the `./datasets/` directory. All the images we provide are in the dimensions we used for training and are in .png format. 
 
 ## Sources 
-The diffusion process code was adapted from the [ResShift](https://github.com/zsyOAOA/ResShift/tree/journal) and the degradation pipeline is inspired from [BSRGAN](https://github.com/cszn/BSRGAN)
+The diffusion process code was adapted from the [ResShift](https://github.com/zsyOAOA/ResShift/tree/journal) and the degradation pipeline is inspired from [BSRGAN](https://github.com/cszn/BSRGAN).
 
 
 
