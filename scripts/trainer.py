@@ -244,11 +244,11 @@ class MultiscaleTrainer(object):
             image,
             ms_diffusion_model,
             scale_list,
+            train_steps_list,
             *,
             ema_decay=0.995,
             train_batch_size=32,
             train_lr=2e-4,
-            train_num_steps=8000,
             gradient_accumulate_every=1,
             fp16=False,
             step_start_ema=200,
@@ -277,7 +277,7 @@ class MultiscaleTrainer(object):
 
         self.batch_size = train_batch_size
         self.gradient_accumulate_every = gradient_accumulate_every
-        self.train_num_steps = train_num_steps
+        self.train_steps_list=train_steps_list
         self.results_folder = Path(results_folder)
         self.results_folder.mkdir(parents=True, exist_ok=True)
         self.img=image
@@ -294,7 +294,7 @@ class MultiscaleTrainer(object):
 
         self.load_list=[]
         img=image
-        self.scale_list=self.scale_list
+        self.scale_list=scale_list
         for i in range(5):
             cur_scale=self.scale_list[i]
             cur_size=(int(round(image.size[0]*cur_scale)),int(round(image.size[1]*cur_scale)))
