@@ -29,20 +29,20 @@ pip install -r requirements.txt
 To train a model on your own image e.g. `<training_image.png>`, put the desired training image under `./datasets/`, and run
 
 ```
-python main.py --scope <training_image> --mode train --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/ 
+!python main.py --scope <scope_name> --mode train --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/
 ```
 
 ## Inference and Super Resolution 
-To generate super resolution result on scale factor `r`, please first train a model on the desired image (as described above) or use a provided pretrained model, then run
+To generate super resolution result for a given resolution, please first train a model on the desired image (as described above) or use a provided pretrained model, then run
 
 ```
-python main.py --scope <training_image> --mode SR --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/ --sr_factor r --load_milestone 4
+!python main.py --scope <scope_name> --mode SR --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/ --widthl 2 4 --heightl 2 4 --load_milestone 2
 ```
 
 ## Data and Pretrained Models
-We provide several pre-trained models for you to use under `./results/` directory. More models will be available soon.
+We will provide some pre-trained models for you to use under `./results/` directory.
  
-We provide all the training images we used in our paper under the `./datasets/` directory. All the images we provide are in the dimensions we used for training and are in .png format. 
+We will provide test images we used in our paper under the `./datasets/` directory. All the images we provide are in the dimensions we used for training and are in .png format. 
 
 ## Sources 
 The diffusion process code was adapted from the [ResShift](https://github.com/zsyOAOA/ResShift/tree/journal) and the degradation pipeline is inspired from [BSRGAN](https://github.com/cszn/BSRGAN).
