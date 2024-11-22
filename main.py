@@ -62,7 +62,7 @@ def main():
             ms_diffusion,
             train_batch_size=args.train_batch_size,
             train_lr=args.train_lr,
-            train_num_steps=args.train_steps_list,  # total training steps
+            train_steps_list=args.train_steps_list,  # total training steps
             gradient_accumulate_every=args.grad_accumulate,  # gradient accumulation steps
             ema_decay=0.995,  # exponential moving average decay
             fp16=False,  # turn on mixed precision training with apex
