@@ -17,18 +17,16 @@ def main():
     parser.add_argument("--image_name", help='choose image name.', default='scene.png')
     parser.add_argument("--results_folder", help='choose results folder.', default='./results/')
     
-    parser.add_argument("--sr_factor", help='downscaling step for each scale.', default=2, type=float)
-    
     parser.add_argument("--timesteps", help='total diffusion timesteps.', default=15, type=int)
     parser.add_argument("--train_batch_size", help='batch size during training.', default=12, type=int)
     parser.add_argument("--grad_accumulate", help='gradient accumulation (bigger batches).', default=1, type=int)
-    parser.add_argument("--train_steps_list", help='scale wise training steps', default=[500,500,500,500,500,500,500,500], type=int)
-    parser.add_argument("--scale_list", help='scale list for training', default=[0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], type=float)
+    parser.add_argument("--train_steps_list", help='scale wise training steps', default=[500, 500, 500, 500, 500, 500, 1000], type=int)
+    parser.add_argument("--scale_list", help='scale list for training', default=[0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1], type=float)
     parser.add_argument("--save_and_sample_every", help='n. steps for checkpointing model.', default=1000, type=int)
     parser.add_argument("--avg_window", help='window size for averaging loss (visualization only).', default=10, type=int)
     parser.add_argument("--train_lr", help='starting lr.', default=1e-2, type=float)
     parser.add_argument("--sched_k_milestones", nargs="+", help='lr scheduler steps x 1000.',
-                        default=[800,1500,2000,3000,5000], type=int)
+                        default=[], type=int)
     
     parser.add_argument('--network_depth', type=int, help='Depth of the backbone network (amount of blocks)',default=4)
     parser.add_argument('--network_filters', type=int,
@@ -36,6 +34,9 @@ def main():
     parser.add_argument("--load_milestone", help='load specific milestone.', default=0, type=int)
 
     parser.add_argument("--device_num", help='use specific cuda device.', default=0, type=int)
+
+    parser.add_argument("--widthl", help='list of sfs for width for training', nargs='*', type=float, default=[2.0])
+    parser.add_argument("--heightl", help='list of sfs for height for training', nargs='*', type=float, default=[2.0])
 
     args = parser.parse_args()
 
@@ -79,9 +80,9 @@ def main():
     if args.mode == 'train':
         ScaleTrainer.train()
         # Sample after training is complete
-        ScaleTrainer.SR(input_folder=args.dataset_folder,input_file=args.image_name,device=device,sr_factor=args.sr_factor)
+        ScaleTrainer.SR(input_folder=args.dataset_folder,input_file=args.image_name,device=device,wl=args.widthl,hl=args.heightl)
     elif args.mode=='SR':
-        ScaleTrainer.SR(input_folder=args.dataset_folder,input_file=args.image_name,device=device,sr_factor=args.sr_factor)
+        ScaleTrainer.SR(input_folder=args.dataset_folder,input_file=args.image_name,device=device,wl=args.widthl,hl=args.heightl)
     else:
         raise NotImplementedError()
 

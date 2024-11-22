@@ -22,7 +22,6 @@ from scripts.diff_jpeg import DiffJPEG
 import cv2
 import lpips
 from PIL import Image
-import pyiqa #type:ignore
 
 try: 
     from apex import amp #type:ignore
@@ -425,44 +424,56 @@ class MultiscaleTrainer(object):
         print("Training Completed!")
 
 
-    def SR(self, input_folder, input_file, device, sr_factor):
+def SR(self, input_folder, input_file, device, wl, hl):
+    """
+    Gradually super-resolve an image based on given width and height scale lists.
 
-        # Load image
-        img = Image.open(input_folder + input_file).convert('RGB')
-        original_size = img.size  # Save original size
-        
-        # Super-resolution size
-        cur_size = (int(original_size[0] * sr_factor),int(original_size[1] * sr_factor))
+    Args:
+        input_folder (str): Path to the folder containing the input image.
+        input_file (str): Name of the input image file.
+        device (torch.device): The device to perform the computation on.
+        wl (list): List of width scale factors for super-resolution.
+        hl (list): List of height scale factors for super-resolution.
+    """
 
-        # Create output folder
-        final_results_folder = Path(str(self.results_folder / 'SR'))
-        final_results_folder.mkdir(parents=True, exist_ok=True)
+    # Load image
+    img = Image.open(os.path.join(input_folder, input_file)).convert('RGB')
+    original_size = img.size  # Save original size (width, height)
 
-        loop = int(math.log2(sr_factor))
-        input_img_tensor = (transforms.ToTensor()(img) * 2 - 1).unsqueeze(0).to(device)  # Add batch dimension 
-        original_size = input_img_tensor.size()[2:4]
-        cur_size = (int(original_size[0] * sr_factor),int(original_size[1] * sr_factor))
-        new_size=original_size
-        for i in range(loop):
-            new_size = (int(new_size[0] * 2),int(new_size[1] * 2))
-            input_img_tensor = F.interpolate(input_img_tensor,new_size,mode='bicubic') 
-            input_img_tensor = self.model.p_sample_loop(input_img_tensor)  # Assuming p_sample_loop is the diffusion step
+    # Create output folder
+    final_results_folder = Path(str(self.results_folder / 'SR'))
+    final_results_folder.mkdir(parents=True, exist_ok=True)
 
+    # Convert the image to a tensor and normalize to [-1, 1]
+    input_img_tensor = (transforms.ToTensor()(img) * 2 - 1).unsqueeze(0).to(device)  # Add batch dimension
 
-        input_img_tensor = F.interpolate(input_img_tensor,cur_size,mode='bicubic')
-        time = str(datetime.datetime.now()).replace(":", "_")
+    # Loop through each scale
+    for w_scale, h_scale in zip(wl, hl):
+        new_height = int(original_size[1] * h_scale)
+        new_width = int(original_size[0] * w_scale)
+        new_size = (new_height, new_width)  # Note: height comes before width
 
-        # Save the upscaled image
-        utils.save_image((input_img_tensor+1)*0.5, os.path.join(final_results_folder, input_file + f'_{time}_Bicubic.png'))  
+        # Upscale the image to the new size using bicubic interpolation
+        input_img_tensor = F.interpolate(input_img_tensor, size=new_size, mode='bicubic')
 
-        final_img = self.model.p_sample_loop(input_img_tensor)  # Assuming p_sample_loop is the diffusion step  
+        # Apply the diffusion model's processing step
+        input_img_tensor = self.model.p_sample_loop(input_img_tensor)
 
-        # Convert from [-1, 1] to [0, 1]
-        final_img = (final_img + 1) * 0.5
-        final_img = torch.clamp(final_img*255,0,255)/255    
+        # Save intermediate result
+        intermediate_file = os.path.join(final_results_folder, input_file + f'_intermediate_{w_scale}x{h_scale}.png')
+        utils.save_image((input_img_tensor + 1) * 0.5, intermediate_file)
 
-        # Save the final super-resolved image
-        utils.save_image(final_img, os.path.join(final_results_folder, input_file + f'_{time}_HR.png'))  
+    # Final super-resolved image
+    final_img = self.model.p_sample_loop(input_img_tensor)  # Final diffusion step
+
+    # Convert from [-1, 1] to [0, 1] and clamp values
+    final_img = (final_img + 1) * 0.5
+    final_img = torch.clamp(final_img * 255, 0, 255) / 255
+
+    # Save the final super-resolved image
+    final_file = os.path.join(final_results_folder, input_file + f'_hr.png')
+    utils.save_image(final_img, final_file)
+
 
 
 
