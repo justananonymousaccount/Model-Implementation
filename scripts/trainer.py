@@ -295,7 +295,7 @@ class MultiscaleTrainer(object):
         self.load_list=[]
         img=image
         self.scale_list=scale_list
-        for i in range(5):
+        for i in range(len(self.scale_list)):
             cur_scale=self.scale_list[i]
             cur_size=(int(round(image.size[0]*cur_scale)),int(round(image.size[1]*cur_scale)))
             img=image.resize(cur_size, Image.LANCZOS)
@@ -305,7 +305,7 @@ class MultiscaleTrainer(object):
             self.train_loader = (self.train_loader[0].to(self.device), self.train_loader[1].to(self.device))
             self.load_list.append(self.train_loader)
 
-        self.train_steps_list = self.train_num_steps
+        self.train_steps_list = self.train_steps_list
 
         self.opt = Adam(ms_diffusion_model.parameters(), lr=train_lr)
 
@@ -424,55 +424,56 @@ class MultiscaleTrainer(object):
         print("Training Completed!")
 
 
-def SR(self, input_folder, input_file, device, wl, hl):
-    """
-    Gradually super-resolve an image based on given width and height scale lists.
+    def SR(self, input_folder, input_file, device, wl, hl):
+        """
+        Gradually super-resolve an image based on given width and height scale lists.
 
-    Args:
-        input_folder (str): Path to the folder containing the input image.
-        input_file (str): Name of the input image file.
-        device (torch.device): The device to perform the computation on.
-        wl (list): List of width scale factors for super-resolution.
-        hl (list): List of height scale factors for super-resolution.
-    """
+        Args:
+            input_folder (str): Path to the folder containing the input image.
+            input_file (str): Name of the input image file.
+            device (torch.device): The device to perform the computation on.
+            wl (list): List of width scale factors for super-resolution.
+            hl (list): List of height scale factors for super-resolution.
+        """
 
-    # Load image
-    img = Image.open(os.path.join(input_folder, input_file)).convert('RGB')
-    original_size = img.size  # Save original size (width, height)
+        # Load image
+        img = Image.open(os.path.join(input_folder, input_file)).convert('RGB')
+        original_size = img.size  # Save original size (width, height)
+        save_name = input_file.replace("_lr.png", "")
+        # Create output folder
+        final_results_folder = Path(str(self.results_folder / 'SR'))
+        final_results_folder.mkdir(parents=True, exist_ok=True)
 
-    # Create output folder
-    final_results_folder = Path(str(self.results_folder / 'SR'))
-    final_results_folder.mkdir(parents=True, exist_ok=True)
+        # Convert the image to a tensor and normalize to [-1, 1]
+        input_img_tensor = (transforms.ToTensor()(img) * 2 - 1).unsqueeze(0).to(device)  # Add batch dimension
 
-    # Convert the image to a tensor and normalize to [-1, 1]
-    input_img_tensor = (transforms.ToTensor()(img) * 2 - 1).unsqueeze(0).to(device)  # Add batch dimension
+        # Loop through each scale
+        for w_scale, h_scale in zip(wl, hl):
+            new_height = int(original_size[1] * h_scale)
+            new_width = int(original_size[0] * w_scale)
+            new_size = (new_height, new_width)  # Note: height comes before width
 
-    # Loop through each scale
-    for w_scale, h_scale in zip(wl, hl):
-        new_height = int(original_size[1] * h_scale)
-        new_width = int(original_size[0] * w_scale)
-        new_size = (new_height, new_width)  # Note: height comes before width
+            # Upscale the image to the new size using bicubic interpolation
+            input_img_tensor = F.interpolate(input_img_tensor, size=new_size, mode='bicubic')
 
-        # Upscale the image to the new size using bicubic interpolation
-        input_img_tensor = F.interpolate(input_img_tensor, size=new_size, mode='bicubic')
+            # Apply the diffusion model's processing step
+            input_img_tensor = self.model.p_sample_loop(input_img_tensor)
 
-        # Apply the diffusion model's processing step
-        input_img_tensor = self.model.p_sample_loop(input_img_tensor)
+            # Save intermediate result
+            intermediate_file = os.path.join(final_results_folder, save_name + f'_intermediate_{w_scale}x{h_scale}.png')
+            utils.save_image((input_img_tensor + 1) * 0.5, intermediate_file)
 
-        # Save intermediate result
-        intermediate_file = os.path.join(final_results_folder, input_file + f'_intermediate_{w_scale}x{h_scale}.png')
-        utils.save_image((input_img_tensor + 1) * 0.5, intermediate_file)
+        # Final super-resolved image
+        final_img = self.model.p_sample_loop(input_img_tensor)  # Final diffusion step
 
-    # Final super-resolved image
-    final_img = self.model.p_sample_loop(input_img_tensor)  # Final diffusion step
+        # Convert from [-1, 1] to [0, 1] and clamp values
+        final_img = (final_img + 1) * 0.5
+        final_img = torch.clamp(final_img * 255, 0, 255) / 255
 
-    # Convert from [-1, 1] to [0, 1] and clamp values
-    final_img = (final_img + 1) * 0.5
-    final_img = torch.clamp(final_img * 255, 0, 255) / 255
-
-    # Save the final super-resolved image
-    final_file = os.path.join(final_results_folder, input_file + f'_hr.png')
-    utils.save_image(final_img, final_file)
+        # Save the final super-resolved image
+        final_file = os.path.join(final_results_folder, save_name + f'_hr.png')
+        utils.save_image(final_img, final_file)
+        print("SR Completed! Results stored!")
 
 
 
