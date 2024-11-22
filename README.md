@@ -1,6 +1,6 @@
 # Do More with Less
 
-[Project](https://justananonymousaccount.github.io/Do-More-with-Less/) | [Paper](https://justananonymousaccount.github.io/Do-More-with-Less/) | [Supplementary Material](https://justananonymousaccount.github.io/Do-More-with-Less/)
+[Project](https://justananonymousaccount.github.io/Do-More-with-Less/) | [Paper](https://justananonymousaccount.github.io/Do-More-with-Less/) | [Supplementary Material](https://justananonymousaccount.github.io/Do-More-with-Less/) | [Colab](https://colab.research.google.com/drive/1y3RYi8tD_95z0jD-d2E0hHb9y5WXAMvk?usp=sharing)
 ### Official pytorch implementation of the paper: "Do More with Less: Pushing Boundaries in Zero-Shot Super-Resolution with Diffusion Models"
 
 ## Table of Contents
