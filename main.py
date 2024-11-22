@@ -18,11 +18,11 @@ def main():
     parser.add_argument("--results_folder", help='choose results folder.', default='./results/')
     
     parser.add_argument("--timesteps", help='total diffusion timesteps.', default=15, type=int)
-    parser.add_argument("--train_batch_size", help='batch size during training.', default=12, type=int)
+    parser.add_argument("--train_batch_size", help='batch size during training.', default=8, type=int)
     parser.add_argument("--grad_accumulate", help='gradient accumulation (bigger batches).', default=1, type=int)
     parser.add_argument("--train_steps_list", help='scale wise training steps', default=[100,100], type=int)
     parser.add_argument("--scale_list", help='scale list for training', default=[0.90,1], type=float)
-    parser.add_argument("--save_and_sample_every", help='n. steps for checkpointing model.', default=1000, type=int)
+    parser.add_argument("--save_and_sample_every", help='n. steps for checkpointing model.', default=100, type=int)
     parser.add_argument("--avg_window", help='window size for averaging loss (visualization only).', default=10, type=int)
     parser.add_argument("--train_lr", help='starting lr.', default=1e-2, type=float)
     parser.add_argument("--sched_k_milestones", nargs="+", help='lr scheduler steps x 1000.',
