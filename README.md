@@ -29,14 +29,14 @@ pip install -r requirements.txt
 To train a model on your own image e.g. `<training_image.png>`, put the desired training image under `./datasets/`, and run
 
 ```
-!python main.py --scope <scope_name> --mode train --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/
+python main.py --scope <scope_name> --mode train --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/
 ```
 
 ## Inference and Super Resolution 
 To generate super resolution result for a given resolution, please first train a model on the desired image (as described above) or use a provided pretrained model, then run
 
 ```
-!python main.py --scope <scope_name> --mode SR --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/ --widthl 2 4 --heightl 2 4 --load_milestone 2
+python main.py --scope <scope_name> --mode SR --dataset_folder ./datasets/ --image_name <training_image.png> --results_folder ./results/ --widthl 2 4 --heightl 2 4 --load_milestone 2
 ```
 
 ## Data and Pretrained Models
