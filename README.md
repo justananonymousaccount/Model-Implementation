@@ -1,6 +1,6 @@
 # Escaping the Mirage
 
-[Project](https://justananonymousaccount.github.io/Authentic-Super-Resolution/) | [Paper](https://justananonymousaccount.github.io/Authentic-Super-Resolution/) | [Supplementary Material](https://justananonymousaccount.github.io/Authentic-Super-Resolution/) | [Colab](https://colab.research.google.com/drive/1y3RYi8tD_95z0jD-d2E0hHb9y5WXAMvk?usp=sharing)
+[Project](https://justananonymousaccount.github.io/Authentic-Super-Resolution/) | [Paper](https://justananonymousaccount.github.io/Authentic-Super-Resolution/) | [Supplementary Material](https://drive.google.com/file/d/1HhnzLtw8cWyQa1vJCCdPcz83FtPR0_CK/view?usp=drive_link) | [Colab](https://colab.research.google.com/drive/1y3RYi8tD_95z0jD-d2E0hHb9y5WXAMvk?usp=sharing)
 ### Official pytorch implementation of the paper: "Escaping the Mirage: Realizing Authentic Super Resolution with Scale-Aware Zero-Shot Diffusion"
 
 ## Table of Contents
